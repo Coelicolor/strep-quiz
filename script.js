@@ -78,13 +78,19 @@ function showResults() {
   document.getElementById("score-summary").textContent = `${userName} ได้คะแนน ${score}/${questions.length} (${percentage}%)`;
 
   const review = document.getElementById("review");
+  let reviewText = "";
   userAnswers
     .filter(a => !a.isCorrect)
     .forEach(a => {
+      const text = `คำถาม: ${a.question} | คำตอบของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
+      reviewText += text + "\n";
       const li = document.createElement("li");
-      li.textContent = `คำถาม: ${a.question} | คำตอบของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
+      li.textContent = text;
       review.appendChild(li);
     });
+
+  // ส่งข้อมูลไป Google Sheets
+  sendResultsToGoogleSheets(userName, score, percentage, reviewText);
 }
 
 function downloadResults() {
@@ -104,4 +110,27 @@ function downloadResults() {
 
 function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
+}
+
+// ฟังก์ชันส่งข้อมูลไป Google Sheets
+function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
+  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
+
+  const formData = new URLSearchParams();
+  formData.append('entry.1964442273', name);        // ชื่อนักเรียน
+  formData.append('entry.1111191378', score);       // คะแนน
+  formData.append('entry.366131963', percentage);   // เปอร์เซ็นต์
+  formData.append('entry.2106468144', reviewText);  // รายละเอียดผลลัพธ์
+
+  fetch(formUrl, {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors' // ป้องกัน CORS errors
+  })
+  .then(() => {
+    console.log('ส่งข้อมูลไป Google Sheets เรียบร้อยแล้ว');
+  })
+  .catch(err => {
+    console.error('ส่งข้อมูลไม่สำเร็จ', err);
+  });
 }
