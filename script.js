@@ -8,8 +8,8 @@ let userName = '';
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // สุ่มคำถาม 40 ข้อจาก 200 ข้อ
-    questions = shuffleArray(data).slice(0, 40);
+    // สุ่มคำถาม 25 ข้อจาก 50 ข้อ
+    questions = shuffleArray(data).slice(0, 25);
   });
 
 function startQuiz() {
