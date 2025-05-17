@@ -141,10 +141,16 @@ function showResults() {
   });
 }
 
-// เริ่มใหม่อีกครั้ง
+
 function restartQuiz() {
-  // ซ่อนหน้า result
+  // ซ่อนทั้ง quiz และ result
+  document.getElementById("quiz-screen").style.display = "none";
   document.getElementById("result-screen").style.display = "none";
+  // รีเซ็ตสถานะ (ถ้าต้องการ)
+  currentQuestionIndex = 0;
+  score = 0;
+  userAnswers = [];
   // แสดงหน้า start ใหม่
   document.getElementById("start-screen").style.display = "block";
 }
+
