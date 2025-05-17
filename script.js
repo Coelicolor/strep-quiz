@@ -1,3 +1,5 @@
+// script.js
+
 // ตัวแปรหลัก
 let questions = [];
 let loaded = false;
@@ -18,13 +20,11 @@ function shuffle(array) {
   return a;
 }
 
-// โหลด questions.json, แปลง answer เป็น Number, สุ่ม 25 ข้อ และ enable ปุ่มเริ่ม
+// โหลด questions.json, สุ่ม 25 ข้อ และ enable ปุ่มเริ่ม
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    data.forEach(q => {
-      q.answer = Number(q.answer);  // zero-based index ตาม JSON
-    });
+    // ใช้ q.answer ตาม JSON (1-based index)
     questions = shuffle(data).slice(0, 25);
     loaded = true;
     document.getElementById('start-btn').disabled = false;
@@ -89,13 +89,14 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const choice = currentChoices[selectedOption];
-  const isCorrect = choice.idx === q.answer;
+  // เปลี่ยนมาเช็คแบบ 1-based index ตาม JSON
+  const isCorrect = (choice.idx + 1) === q.answer;
 
   // เก็บผล
   userAnswers.push({
     question: q.question,
     userAnswer: choice.text,
-    correctAnswer: q.options[q.answer],
+    correctAnswer: q.options[q.answer - 1],
     isCorrect
   });
   if (isCorrect) score++;
@@ -104,7 +105,7 @@ function submitAnswer() {
   document.getElementById("feedback").textContent =
     isCorrect
       ? "😊 ถูกต้อง!"
-      : `😢 ผิด! เฉลย: ${q.options[q.answer]}`;
+      : `😢 ผิด! เฉลย: ${q.options[q.answer - 1]}`;
 
   // รอ 1 วิ ก่อนข้อต่อไป
   setTimeout(() => {
