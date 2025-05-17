@@ -59,8 +59,12 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const selectedChoice = currentChoices[selectedOption];
-  const correctIndex = Number(q.answer);            // แปลงเป็น Number เผื่อ JSON เป็นสตริง
+  const correctIndex = Number(q.answer); // แปลงเป็นตัวเลขเผื่อมาเป็นสตริง
+  // ตรวจสอบความถูกต้องโดยเทียบกับ original index
   const isCorrect = selectedChoice.index === correctIndex;
+
+  // *** Debugging log ***
+  console.log(`Q${currentQuestionIndex+1}: selectedChoice.index=${selectedChoice.index}, correctIndex=${correctIndex}`);
 
   // เก็บผลลัพธ์
   userAnswers.push({
@@ -70,7 +74,9 @@ function submitAnswer() {
     isCorrect
   });
 
-  if (isCorrect) score++;
+  if (isCorrect) {
+    score++;
+  }
 
   // เคลียร์ selection และขึ้นข้อถัดไป
   selectedOption = null;
