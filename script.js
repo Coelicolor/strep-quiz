@@ -10,7 +10,7 @@ let userAnswers = [];
 let userName = '';
 let currentChoices = [];
 
-// ฟังก์ชันสุ่ม Fisher–Yates
+// Fisher–Yates shuffle
 function shuffle(array) {
   const a = array.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -20,14 +20,20 @@ function shuffle(array) {
   return a;
 }
 
-// โหลด questions.json, สุ่ม 25 ข้อ และ enable ปุ่มเริ่ม
+// โหลดคำถาม
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // ใช้ q.answer ตาม JSON (1-based index)
+    // แปลง answer ให้เป็น Number (zero-based ตาม JSON)
+    data.forEach(q => {
+      q.answer = Number(q.answer);
+    });
+    // สุ่ม 25 ข้อ
     questions = shuffle(data).slice(0, 25);
     loaded = true;
-    document.getElementById('start-btn').disabled = false;
+    // ปลดล็อคปุ่มเริ่ม (ถ้าใช้ disabled ใน HTML)
+    const btn = document.getElementById('start-btn');
+    if (btn) btn.disabled = false;
   })
   .catch(err => {
     console.error('โหลดคำถามไม่สำเร็จ:', err);
@@ -40,13 +46,11 @@ function startQuiz() {
     alert('กำลังโหลดคำถาม รอสักครู่...');
     return;
   }
-
   userName = document.getElementById("username").value.trim();
   if (!userName) {
     alert("กรุณากรอกชื่อก่อนเริ่มแบบทดสอบ");
     return;
   }
-
   document.getElementById("start-screen").style.display = "none";
   document.getElementById("quiz-screen").style.display = "block";
   showQuestion();
@@ -63,10 +67,11 @@ function showQuestion() {
   document.getElementById("feedback").textContent = '';
   selectedOption = null;
 
-  // สร้าง choices พร้อม original index แล้วสับ
-  currentChoices = q.options.map((text, idx) => ({ text, idx }));
+  // สร้าง currentChoices เก็บข้อความ + ดัชนีดั้งเดิม
+  currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffle(currentChoices);
 
+  // แสดงตัวเลือก
   currentChoices.forEach((choice, displayIdx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
@@ -80,7 +85,7 @@ function showQuestion() {
   });
 }
 
-// ส่งคำตอบ
+// ตรวจคำตอบ
 function submitAnswer() {
   if (selectedOption === null) {
     alert("กรุณาเลือกคำตอบก่อน");
@@ -89,25 +94,25 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const choice = currentChoices[selectedOption];
-  // เปลี่ยนมาเช็คแบบ 1-based index ตาม JSON
-  const isCorrect = (choice.idx + 1) === q.answer;
+  // เปรียบเทียบดัชนีดั้งเดิมกับ answer ใน JSON
+  const isCorrect = choice.index === q.answer;
 
   // เก็บผล
   userAnswers.push({
     question: q.question,
     userAnswer: choice.text,
-    correctAnswer: q.options[q.answer - 1],
+    correctAnswer: q.options[q.answer],
     isCorrect
   });
   if (isCorrect) score++;
 
-  // แสดง feedback
+  // feedback
   document.getElementById("feedback").textContent =
     isCorrect
       ? "😊 ถูกต้อง!"
-      : `😢 ผิด! เฉลย: ${q.options[q.answer - 1]}`;
+      : `😢 ผิด! เฉลย: ${q.options[q.answer]}`;
 
-  // รอ 1 วิ ก่อนข้อต่อไป
+  // รอ 1 วิ แล้วไปข้อถัดไป
   setTimeout(() => {
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
@@ -138,11 +143,13 @@ function showResults() {
       review.appendChild(li);
     });
 
-  // ส่งข้อมูลไป Google Sheets
-  sendResultsToGoogleSheets(userName, score, percentage, review.textContent);
+  // ส่งผลไป Google Sheets
+  sendResultsToGoogleSheets(
+    userName, score, percentage, review.textContent
+  );
 }
 
-// ดาวน์โหลดผลลัพธ์เป็น CSV
+// ดาวน์โหลด CSV
 function downloadResults() {
   let csv = `ชื่อ,คะแนน,เปอร์เซ็นต์\n${userName},${score},${Math.round((score / questions.length) * 100)}%\n\n`;
   csv += "คำถาม,คำตอบคุณ,เฉลย\n";
@@ -157,7 +164,7 @@ function downloadResults() {
   link.click();
 }
 
-// ส่งข้อมูลไป Google Forms/Sheets
+// ส่งผลไป Google Forms/Sheets
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
   const formData = new URLSearchParams();
