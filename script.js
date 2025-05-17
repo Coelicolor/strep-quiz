@@ -148,21 +148,26 @@ function restartQuiz() {
   document.getElementById("start-screen").style.display = "block";
 }
 
-// แก้ฟังก์ชันนี้ใน script.js
+
+// ฟังก์ชันส่งข้อมูลไป Google Sheets
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
+
   const formData = new URLSearchParams();
-  formData.append('entry.1964442273', name);
-  formData.append('entry.1111191378', score);
-  formData.append('entry.366131963', percentage);
-  formData.append('entry.2106468144', reviewText);
+  formData.append('entry.1964442273', name);        // ชื่อนักเรียน
+  formData.append('entry.1111191378', score);       // คะแนน
+  formData.append('entry.366131963', percentage);   // เปอร์เซ็นต์
+  formData.append('entry.2106468144', reviewText);  // รายละเอียดผลลัพธ์
 
   fetch(formUrl, {
     method: 'POST',
-    mode: 'no-cors',
-    body: formData
+    body: formData,
+    mode: 'no-cors' // ป้องกัน CORS errors
   })
-  .then(() => console.log('ส่งข้อมูลไป Google Forms เรียบร้อย'))
-  .catch(err => console.error('ส่งข้อมูลไม่สำเร็จ', err));
+  .then(() => {
+    console.log('ส่งข้อมูลไป Google Sheets เรียบร้อยแล้ว');
+  })
+  .catch(err => {
+    console.error('ส่งข้อมูลไม่สำเร็จ', err);
+  });
 }
-
