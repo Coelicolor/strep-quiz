@@ -25,6 +25,8 @@ fetch('questions.json')
     // แปลง answer ให้เป็น Number (zero-based อยู่แล้วถ้า JSON ให้ 1=ตัวที่ 2)
     data.forEach(q => q.answer = Number(q.answer));
     questions = shuffle(data).slice(0, 25);
+    loaded = true;
+document.getElementById('start-btn').disabled = false;
   })
   .catch(err => {
     console.error('โหลดคำถามไม่สำเร็จ', err);
