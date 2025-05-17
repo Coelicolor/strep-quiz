@@ -87,11 +87,13 @@ button:hover {
 }
 
 #score-summary {
-  font-size: 18px;
+  font-size: 5rem;        /* ปรับเป็นขนาดใหญ่ตามต้องการ */
   font-weight: bold;
   color: #6a0572;
   text-align: center;
+  margin: 20px 0;
 }
+
 
 #review {
   background-color: #fff0f6;
