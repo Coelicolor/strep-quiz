@@ -24,14 +24,14 @@ function shuffle(array) {
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // แปลง answer ให้เป็น Number (zero-based ตาม JSON)
+    // แปลง answer เป็น Number เก็บใน answerIndex
     data.forEach(q => {
-      q.answer = Number(q.answer);
+      q.answerIndex = Number(q.answer);
+      q.correctText = q.options[q.answerIndex];
     });
     // สุ่ม 25 ข้อ
     questions = shuffle(data).slice(0, 25);
     loaded = true;
-    // ปลดล็อคปุ่มเริ่ม (ถ้าใช้ disabled ใน HTML)
     const btn = document.getElementById('start-btn');
     if (btn) btn.disabled = false;
   })
@@ -71,7 +71,6 @@ function showQuestion() {
   currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffle(currentChoices);
 
-  // แสดงตัวเลือก
   currentChoices.forEach((choice, displayIdx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
@@ -94,14 +93,14 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const choice = currentChoices[selectedOption];
-  // เปรียบเทียบดัชนีดั้งเดิมกับ answer ใน JSON
-  const isCorrect = choice.index === q.answer;
+  const isCorrect = choice.index === q.answerIndex;
+  const correctText = q.correctText;
 
   // เก็บผล
   userAnswers.push({
     question: q.question,
     userAnswer: choice.text,
-    correctAnswer: q.options[q.answer],
+    correctAnswer: correctText,
     isCorrect
   });
   if (isCorrect) score++;
@@ -110,7 +109,7 @@ function submitAnswer() {
   document.getElementById("feedback").textContent =
     isCorrect
       ? "😊 ถูกต้อง!"
-      : `😢 ผิด! เฉลย: ${q.options[q.answer]}`;
+      : `😢 ผิด! เฉลย: ${correctText}`;
 
   // รอ 1 วิ แล้วไปข้อถัดไป
   setTimeout(() => {
@@ -143,10 +142,7 @@ function showResults() {
       review.appendChild(li);
     });
 
-  // ส่งผลไป Google Sheets
-  sendResultsToGoogleSheets(
-    userName, score, percentage, review.textContent
-  );
+  sendResultsToGoogleSheets(userName, score, percentage, review.textContent);
 }
 
 // ดาวน์โหลด CSV
