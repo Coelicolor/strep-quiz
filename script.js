@@ -24,12 +24,12 @@ function shuffle(array) {
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // แปลง answer เป็น Number เก็บใน answerIndex
     data.forEach(q => {
-      q.answerIndex = Number(q.answer);
+      // แปลง answer เป็น Number (1-based) แล้วเปลี่ยนเป็น zero-based index
+      q.answerIndex = Number(q.answer) - 1;
+      // เก็บข้อความเฉลย
       q.correctText = q.options[q.answerIndex];
     });
-    // สุ่ม 25 ข้อ
     questions = shuffle(data).slice(0, 25);
     loaded = true;
     const btn = document.getElementById('start-btn');
@@ -71,6 +71,7 @@ function showQuestion() {
   currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffle(currentChoices);
 
+  // แสดงตัวเลือก
   currentChoices.forEach((choice, displayIdx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
@@ -94,13 +95,12 @@ function submitAnswer() {
   const q = questions[currentQuestionIndex];
   const choice = currentChoices[selectedOption];
   const isCorrect = choice.index === q.answerIndex;
-  const correctText = q.correctText;
 
   // เก็บผล
   userAnswers.push({
     question: q.question,
     userAnswer: choice.text,
-    correctAnswer: correctText,
+    correctAnswer: q.correctText,
     isCorrect
   });
   if (isCorrect) score++;
@@ -109,7 +109,7 @@ function submitAnswer() {
   document.getElementById("feedback").textContent =
     isCorrect
       ? "😊 ถูกต้อง!"
-      : `😢 ผิด! เฉลย: ${correctText}`;
+      : `😢 ผิด! เฉลย: ${q.correctText}`;
 
   // รอ 1 วิ แล้วไปข้อถัดไป
   setTimeout(() => {
