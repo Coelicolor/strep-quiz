@@ -4,12 +4,12 @@ let score = 0;
 let selectedOption = null;
 let userAnswers = [];
 let userName = '';
+let currentChoices = []; // เก็บ choices ที่สับแล้ว
 
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // ⭐ สุ่มคำถาม 25 ข้อจากทั้งหมด
-    questions = shuffleArray(data).slice(0, 25);
+    questions = shuffleArray(data).slice(0, 25); // สุ่มคำถาม 25 ข้อ
   });
 
 function startQuiz() {
@@ -30,15 +30,15 @@ function showQuestion() {
   optionsList.innerHTML = '';
   document.getElementById("feedback").textContent = '';
 
-  // ⭐ สุ่มลำดับตัวเลือก พร้อมเก็บ index เดิม
-  const choicesWithIndex = q.options.map((text, i) => ({ text, index: i }));
-  const shuffledChoices = shuffleArray(choicesWithIndex);
+  // สร้าง choices พร้อม index ดั้งเดิม และสุ่มลำดับ
+  currentChoices = q.options.map((text, i) => ({ text, index: i }));
+  currentChoices = shuffleArray(currentChoices);
 
-  shuffledChoices.forEach((choice) => {
+  currentChoices.forEach((choice, idx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
     li.onclick = () => {
-      selectedOption = choice.index; // ⭐ เก็บ index ของตัวเลือกเดิม
+      selectedOption = idx;
       document.querySelectorAll('#options li').forEach(el => el.classList.remove('selected'));
       li.classList.add('selected');
     };
@@ -53,14 +53,15 @@ function submitAnswer() {
   }
 
   const q = questions[currentQuestionIndex];
-  const isCorrect = selectedOption === q.answer;
+  const selectedChoice = currentChoices[selectedOption];
+  const isCorrect = selectedChoice.index === q.answer;
 
   if (isCorrect) score++;
 
   userAnswers.push({
     question: q.question,
     correctAnswer: q.options[q.answer],
-    userAnswer: q.options[selectedOption],
+    userAnswer: selectedChoice.text,
     isCorrect
   });
 
@@ -93,7 +94,6 @@ function showResults() {
       review.appendChild(li);
     });
 
-  // ส่งข้อมูลไป Google Sheets
   sendResultsToGoogleSheets(userName, score, percentage, reviewText);
 }
 
@@ -116,15 +116,14 @@ function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
 
-// ส่งข้อมูลไป Google Sheets
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
 
   const formData = new URLSearchParams();
-  formData.append('entry.1964442273', name);        // ชื่อนักเรียน
-  formData.append('entry.1111191378', score);       // คะแนน
-  formData.append('entry.366131963', percentage);   // เปอร์เซ็นต์
-  formData.append('entry.2106468144', reviewText);  // เฉลย
+  formData.append('entry.1964442273', name);
+  formData.append('entry.1111191378', score);
+  formData.append('entry.366131963', percentage);
+  formData.append('entry.2106468144', reviewText);
 
   fetch(formUrl, {
     method: 'POST',
