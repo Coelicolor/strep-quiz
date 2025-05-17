@@ -11,7 +11,7 @@ fetch('questions.json')
   .then(res => res.json())
   .then(data => {
     // แปลง answer เป็น Number
-    data.forEach(q => { q.answer = Number(q.answer); });
+    data.forEach(q => { q.answer = Number(q.answer) - 1; }); // แปลงให้ zero-based
     // สุ่มและเลือก 25 ข้อ
     questions = fisherYatesShuffle(data).slice(0, 25);
   });
