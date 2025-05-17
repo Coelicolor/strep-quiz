@@ -234,16 +234,15 @@
   },
 
 {
-    "question": "Table 3 และ 4 ใน Source 2 แสดงให้เห็นถึงความแตกต่างในกลุ่มยีน PGP และกลุ่มยีนการสังเคราะห์สารทุติยภูมิระหว่าง DSM40032T และ TM32 ยกตัวอย่างกลุ่มยีนที่เกี่ยวข้องกับ protease ใน Table 3 และกลุ่มยีนที่เกี่ยวข้องกับ Polyketide synthase (PKS) Type 1 ใน Table 4 ที่พบความแตกต่างในการมีอยู่ระหว่างสองสายพันธุ์นี้
-",
-    "options": [
-      "DSM 40032T มียีน htpX-5 protease แต่ TM32 ไม่มี และ DSM 40032T มีกลุ่มยีน Micromonolactam 8 กลุ่ม แต่ TM32 ไม่มีแม้แต่กลุ่มเดียว",
-      "TM32 มียีน sphR alkaline phosphatase แต่ DSM 40032T ไม่มี และ TM32 มีกลุ่มยีน Type 2 PKS Lysolipin แต่ DSM 40032T ไม่มี",
-      "DSM 40032T มียีน exo-β-1,3-glucanase แต่ TM32 ไม่มี และ DSM 40032T มีกลุ่มยีน Type 1 PKS Stambomycin แต่ TM32 ไม่มี",
-      "TM32 มียีน chiD chitinase แต่ DSM 40032T ไม่มี และ TM32 มีกลุ่มยีน PKS Type 1 PM100117/PM100118 แต่ DSM 40032T ไม่มี"
-    ],
-    "answer": 1
-  },
+  "question": "Table 3 และ 4 ใน Source 2 แสดงให้เห็นถึงความแตกต่างในกลุ่มยีน PGP และกลุ่มยีนการสังเคราะห์สารทุติยภูมิระหว่าง DSM40032T และ TM32 ยกตัวอย่างกลุ่มยีนที่เกี่ยวข้องกับ protease ใน Table 3 และกลุ่มยีนที่เกี่ยวข้องกับ Polyketide synthase (PKS) Type 1 ใน Table 4 ที่พบความแตกต่างในการมีอยู่ระหว่างสองสายพันธุ์นี้",
+  "options": [
+    "DSM 40032T มียีน htpX-5 protease แต่ TM32 ไม่มี และ DSM 40032T มีกลุ่มยีน Micromonolactam 8 กลุ่ม แต่ TM32 ไม่มีแม้แต่กลุ่มเดียว",
+    "TM32 มียีน sphR alkaline phosphatase แต่ DSM 40032T ไม่มี และ TM32 มีกลุ่มยีน Type 2 PKS Lysolipin แต่ DSM 40032T ไม่มี",
+    "DSM 40032T มียีน exo-β-1,3-glucanase แต่ TM32 ไม่มี และ DSM 40032T มีกลุ่มยีน Type 1 PKS Stambomycin แต่ TM32 ไม่มี",
+    "TM32 มียีน chiD chitinase แต่ DSM 40032T ไม่มี และ TM32 มีกลุ่มยีน PKS Type 1 PM100117/PM100118 แต่ DSM 40032T ไม่มี"
+  ],
+  "answer": 1
+},
 
 
 {
@@ -341,15 +340,15 @@
     "answer": 2
   },
 {
-    "question": "ในการวิเคราะห์การเจริญเติบโตของ Streptomyces species ที่อธิบายใน Source1 เชื้อถูกบ่มที่อุณหภูมิเท่าใด?",
-    "options": [
-      "30°C",
-      "37°C",
-      “28°C",
-      “45°C"
-    ],
-    "answer": 3
-  },
+  "question": "ในการวิเคราะห์การเจริญเติบโตของ Streptomyces species ที่อธิบายใน Source1 เชื้อถูกบ่มที่อุณหภูมิเท่าใด?",
+  "options": [
+    "30°C",
+    "37°C",
+    "28°C",
+    "45°C"
+  ],
+  "answer": 3
+},
 {
     "question": "ตาม Source1 อาหารเลี้ยงเชื้อชนิดใดที่ใช้ในการศึกษา growth curve ของ Streptomyces species G-10, G-14, G-18, และ S4L? ",
     "options": [
@@ -371,15 +370,15 @@
     "answer": 2
   },
 {
-    "question": "ยาปฏิชีวนะชนิดใดที่ถูกผลิตขึ้นโดยใช้เปลือกสับปะรดเป็นสารตั้งต้นและใช้เชื้อ Streptomyces สายพันธุ์ต่างๆ",
-    "options": [
-      "เพนิซิลลิน”,
-      "สเตรปโตมัยซิน",
-      "เตตราไซคลิน",
-      "นีโอมัยซิน"
-    ],
-    "answer": 3
-  },
+  "question": "ยาปฏิชีวนะชนิดใดที่ถูกผลิตขึ้นโดยใช้เปลือกสับปะรดเป็นสารตั้งต้นและใช้เชื้อ Streptomyces สายพันธุ์ต่างๆ",
+  "options": [
+    "เพนิซิลลิน",
+    "สเตรปโตมัยซิน",
+    "เตตราไซคลิน",
+    "นีโอมัยซิน"
+  ],
+  "answer": 2
+},
 {
     "question": "กระบวนการหมักแบบใดที่ใช้ในการผลิตยา Tetracycline จากเปลือกสับปะรดโดยเชื้อ Streptomyces",
     "options": [
@@ -401,15 +400,15 @@
     "answer": 3
   },
 {
-    "question": "เชื้อทดสอบ (test organism) ที่ใช้ในเทคนิค Disc diffusion bioassay สำหรับวิเคราะห์ Tetracycline ตาม Source 4 คือเชื้อใด?",
-    "options": [
-      "Escherichia coli TISTR 887",
-      "Staphylococcus aureus TISTR 1466",
-      "Bacillus cereus NCIM 11778v”,
-      "Rigidoporus sp."
-    ],
-    "answer": 3
-  },
+  "question": "เชื้อทดสอบ (test organism) ที่ใช้ในเทคนิค Disc diffusion bioassay สำหรับวิเคราะห์ Tetracycline ตาม Source 4 คือเชื้อใด?",
+  "options": [
+    "Escherichia coli TISTR 887",
+    "Staphylococcus aureus TISTR 1466",
+    "Bacillus cereus NCIM 11778v",
+    "Rigidoporus sp."
+  ],
+  "answer": 3
+},
 {
     "question": "ในการวิเคราะห์ปริมาณ Tetracycline ด้วยวิธี Disc diffusion bioassay ตาม Source 4, สิ่งที่ถูกวัดเพื่อประเมินประสิทธิภาพของยาปฏิชีวนะคืออะไร?",
     "options": [
@@ -464,15 +463,15 @@
     "answer": 2
   },
 {
-    "question": " จากแหล่งข้อมูลที่ 4 อุณหภูมิการบ่มที่เหมาะสมที่สุดสำหรับการผลิต Tetracycline โดย Streptomyces strains คือ 35°C อุณหภูมินี้บ่งชี้ว่าเชื้อ Streptomyces ที่ใช้ในการศึกษามีลักษณะทางชีวภาพแบบใดมากที่สุด?",
-    "options": [
-      "เทอร์โมฟิลิก (ชอบอุณหภูมิสูง) ",
-      "เมโซฟิลิก (ชอบอุณหภูมิปานกลาง)",
-      “ไซโครฟิลิก (ชอบอุณหภูมิต่ำ)",
-      "ทนต่ออุณหภูมิได้หลากหลายมาก (Extremophile)"
-    ],
-    "answer": 2
-  },
+  "question": "จากแหล่งข้อมูลที่ 4 อุณหภูมิการบ่มที่เหมาะสมที่สุดสำหรับการผลิต Tetracycline โดย Streptomyces strains คือ 35°C อุณหภูมินี้บ่งชี้ว่าเชื้อ Streptomyces ที่ใช้ในการศึกษามีลักษณะทางชีวภาพแบบใดมากที่สุด?",
+  "options": [
+    "เทอร์โมฟิลิก (ชอบอุณหภูมิสูง)",
+    "เมโซฟิลิก (ชอบอุณหภูมิปานกลาง)",
+    "ไซโครฟิลิก (ชอบอุณหภูมิต่ำ)",
+    "ทนต่ออุณหภูมิได้หลากหลายมาก (Extremophile)"
+  ],
+  "answer": 2
+},
 
 {
     "question": "หากทำการหมักเพื่อผลิต Tetracycline โดย Streptomyces strains เหล่านี้ที่อุณหภูมิ 45°C แทนที่จะเป็น 35°C ตามที่ระบุในแหล่งข้อมูลที่ 44 ผลลัพธ์ที่คาดว่าจะเกิดขึ้นต่อปริมาณ Tetracycline ที่หลั่งออกมาคืออะไร? ",
