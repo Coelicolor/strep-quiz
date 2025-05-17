@@ -25,9 +25,7 @@ fetch('questions.json')
   .then(res => res.json())
   .then(data => {
     data.forEach(q => {
-      // แปลง answer เป็น Number (1-based) แล้วเปลี่ยนเป็น zero-based index
-      q.answerIndex = Number(q.answer) - 1;
-      // เก็บข้อความเฉลย
+      q.answerIndex = Number(q.answer) - 1;        // JSON ให้ 1-based => zero-based
       q.correctText = q.options[q.answerIndex];
     });
     questions = shuffle(data).slice(0, 25);
@@ -51,7 +49,13 @@ function startQuiz() {
     alert("กรุณากรอกชื่อก่อนเริ่มแบบทดสอบ");
     return;
   }
+  // ซ่อนหน้าเริ่มต้น
   document.getElementById("start-screen").style.display = "none";
+  // รีเซ็ตข้อมูล
+  currentQuestionIndex = 0;
+  score = 0;
+  userAnswers = [];
+  // แสดงหน้าทำแบบทดสอบ
   document.getElementById("quiz-screen").style.display = "block";
   showQuestion();
 }
@@ -67,11 +71,10 @@ function showQuestion() {
   document.getElementById("feedback").textContent = '';
   selectedOption = null;
 
-  // สร้าง currentChoices เก็บข้อความ + ดัชนีดั้งเดิม
+  // สร้าง currentChoices พร้อมดัชนีดั้งเดิม
   currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffle(currentChoices);
 
-  // แสดงตัวเลือก
   currentChoices.forEach((choice, displayIdx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
@@ -107,9 +110,7 @@ function submitAnswer() {
 
   // feedback
   document.getElementById("feedback").textContent =
-    isCorrect
-      ? "😊 ถูกต้อง!"
-      : `😢 ผิด! เฉลย: ${q.correctText}`;
+    isCorrect ? "😊 ถูกต้อง!" : `😢 ผิด! เฉลย: ${q.correctText}`;
 
   // รอ 1 วิ แล้วไปข้อถัดไป
   setTimeout(() => {
@@ -133,47 +134,17 @@ function showResults() {
 
   const review = document.getElementById("review");
   review.innerHTML = '';
-  userAnswers
-    .filter(a => !a.isCorrect)
-    .forEach(a => {
-      const li = document.createElement('li');
-      li.textContent =
-        `คำถาม: ${a.question} | ของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
-      review.appendChild(li);
-    });
-
-  sendResultsToGoogleSheets(userName, score, percentage, review.textContent);
-}
-
-// ดาวน์โหลด CSV
-function downloadResults() {
-  let csv = `ชื่อ,คะแนน,เปอร์เซ็นต์\n${userName},${score},${Math.round((score / questions.length) * 100)}%\n\n`;
-  csv += "คำถาม,คำตอบคุณ,เฉลย\n";
-  userAnswers.forEach(a => {
-    csv += `"${a.question}","${a.userAnswer}","${a.correctAnswer}"\n`;
+  userAnswers.filter(a => !a.isCorrect).forEach(a => {
+    const li = document.createElement('li');
+    li.textContent = `คำถาม: ${a.question} | ของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
+    review.appendChild(li);
   });
-
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "ผลลัพธ์แบบทดสอบ.csv";
-  link.click();
 }
 
-// ส่งผลไป Google Forms/Sheets
-function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
-  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
-  const formData = new URLSearchParams();
-  formData.append('entry.1964442273', name);
-  formData.append('entry.1111191378', score);
-  formData.append('entry.366131963', percentage);
-  formData.append('entry.2106468144', reviewText);
-
-  fetch(formUrl, {
-    method: 'POST',
-    body: formData,
-    mode: 'no-cors'
-  })
-    .then(() => console.log('ส่งข้อมูลไป Google Sheets เรียบร้อย'))
-    .catch(err => console.error('ส่งข้อมูลไม่สำเร็จ', err));
+// เริ่มใหม่อีกครั้ง
+function restartQuiz() {
+  // ซ่อนหน้า result
+  document.getElementById("result-screen").style.display = "none";
+  // แสดงหน้า start ใหม่
+  document.getElementById("start-screen").style.display = "block";
 }
