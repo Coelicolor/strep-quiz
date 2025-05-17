@@ -85,7 +85,6 @@ button:hover {
   background-color: #69db7c;
   transform: translateY(-2px);
 }
-
 #score-summary {
   font-size: 5rem;        /* ปรับเป็นขนาดใหญ่ตามต้องการ */
   font-weight: bold;
