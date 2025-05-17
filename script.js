@@ -6,10 +6,11 @@ let userAnswers = [];
 let userName = '';
 let currentChoices = []; // เก็บ choices ที่สับแล้ว
 
+// โหลดคำถามและสุ่ม 25 ข้อ
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    questions = shuffleArray(data).slice(0, 25); // สุ่มคำถาม 25 ข้อ
+    questions = shuffleArray(data).slice(0, 25);
   });
 
 function startQuiz() {
@@ -25,13 +26,16 @@ function startQuiz() {
 
 function showQuestion() {
   const q = questions[currentQuestionIndex];
-  document.getElementById("question-title").textContent = `ข้อที่ ${currentQuestionIndex + 1}: ${q.question}`;
+  document.getElementById("question-title").textContent =
+    `ข้อที่ ${currentQuestionIndex + 1}: ${q.question}`;
+
   const optionsList = document.getElementById("options");
   optionsList.innerHTML = '';
   document.getElementById("feedback").textContent = '';
+  selectedOption = null;
 
-  // สร้าง choices พร้อม index ดั้งเดิม และสุ่มลำดับ
-  currentChoices = q.options.map((text, i) => ({ text, index: i }));
+  // สร้าง choices พร้อม original index แล้วสุ่มลำดับ
+  currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffleArray(currentChoices);
 
   currentChoices.forEach((choice, idx) => {
@@ -39,7 +43,8 @@ function showQuestion() {
     li.textContent = choice.text;
     li.onclick = () => {
       selectedOption = idx;
-      document.querySelectorAll('#options li').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#options li')
+        .forEach(el => el.classList.remove('selected'));
       li.classList.add('selected');
     };
     optionsList.appendChild(li);
@@ -54,17 +59,20 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const selectedChoice = currentChoices[selectedOption];
-  const isCorrect = selectedChoice.index === q.answer;
+  const correctIndex = Number(q.answer);            // แปลงเป็น Number เผื่อ JSON เป็นสตริง
+  const isCorrect = selectedChoice.index === correctIndex;
 
-  if (isCorrect) score++;
-
+  // เก็บผลลัพธ์
   userAnswers.push({
     question: q.question,
-    correctAnswer: q.options[q.answer],
+    correctAnswer: q.options[correctIndex],
     userAnswer: selectedChoice.text,
     isCorrect
   });
 
+  if (isCorrect) score++;
+
+  // เคลียร์ selection และขึ้นข้อถัดไป
   selectedOption = null;
   currentQuestionIndex++;
 
@@ -80,10 +88,13 @@ function showResults() {
   document.getElementById("result-screen").style.display = "block";
 
   const percentage = Math.round((score / questions.length) * 100);
-  document.getElementById("score-summary").textContent = `${userName} ได้คะแนน ${score}/${questions.length} (${percentage}%)`;
+  document.getElementById("score-summary").textContent =
+    `${userName} ได้คะแนน ${score}/${questions.length} (${percentage}%)`;
 
   const review = document.getElementById("review");
-  let reviewText = "";
+  review.innerHTML = '';
+  let reviewText = '';
+
   userAnswers
     .filter(a => !a.isCorrect)
     .forEach(a => {
@@ -100,7 +111,6 @@ function showResults() {
 function downloadResults() {
   let csv = `ชื่อ,คะแนน,เปอร์เซ็นต์\n${userName},${score},${Math.round((score / questions.length) * 100)}%\n\n`;
   csv += "คำถาม,คำตอบของผู้เล่น,คำตอบที่ถูกต้อง\n";
-
   userAnswers.forEach(q => {
     csv += `"${q.question}","${q.userAnswer}","${q.correctAnswer}"\n`;
   });
@@ -118,7 +128,6 @@ function shuffleArray(arr) {
 
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
-
   const formData = new URLSearchParams();
   formData.append('entry.1964442273', name);
   formData.append('entry.1111191378', score);
@@ -130,10 +139,6 @@ function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
     body: formData,
     mode: 'no-cors'
   })
-  .then(() => {
-    console.log('ส่งข้อมูลไป Google Sheets เรียบร้อยแล้ว');
-  })
-  .catch(err => {
-    console.error('ส่งข้อมูลไม่สำเร็จ', err);
-  });
+    .then(() => console.log('ส่งข้อมูลไป Google Sheets เรียบร้อยแล้ว'))
+    .catch(err => console.error('ส่งข้อมูลไม่สำเร็จ', err));
 }
