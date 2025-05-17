@@ -27,15 +27,18 @@
     </div>
 
     <!-- หน้าจอผลลัพธ์ -->
-    <div id="result-screen" style="display:none;">
-      <h2>ผลการทำแบบทดสอบ</h2>
-      <p id="score-summary"></p>
-      <h3>เฉลยข้อที่ตอบผิด</h3>
-      <ul id="review"></ul>
-      <button onclick="downloadResults()">ดาวน์โหลดผลลัพธ์ (.csv)</button>
-    </div>
+   <div id="result-screen" style="display:none">
+  <h2 id="score-summary"></h2>
+  <h3>ทบทวนข้อที่ตอบผิด</h3>
+  <ul id="review"></ul>
 
+  <!-- เอาปุ่มดาวน์โหลดออก -->
+  <!-- <button onclick="downloadResults()">ดาวน์โหลดผลลัพธ์</button> -->
+
+  <!-- เพิ่มปุ่ม restart -->
+  <button onclick="restartQuiz()">เริ่มแบบทดสอบอีกครั้ง</button>
   </div>
+
 
   <script src="script.js"></script>
 </body>
