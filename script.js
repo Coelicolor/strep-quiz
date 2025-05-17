@@ -4,13 +4,16 @@ let score = 0;
 let selectedOption = null;
 let userAnswers = [];
 let userName = '';
-let currentChoices = []; // เก็บ choices ที่สับแล้ว
+let currentChoices = [];
 
-// โหลดคำถามและสุ่ม 25 ข้อ
+// โหลดคำถาม แปลง answer เป็น Number แล้วสุ่ม 25 ข้อ
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    questions = shuffleArray(data).slice(0, 25);
+    // แปลง answer เป็น Number
+    data.forEach(q => { q.answer = Number(q.answer); });
+    // สุ่มและเลือก 25 ข้อ
+    questions = fisherYatesShuffle(data).slice(0, 25);
   });
 
 function startQuiz() {
@@ -31,20 +34,21 @@ function showQuestion() {
 
   const optionsList = document.getElementById("options");
   optionsList.innerHTML = '';
-  document.getElementById("feedback").textContent = '';
   selectedOption = null;
+  document.getElementById("feedback").textContent = '';
 
-  // สร้าง choices พร้อม original index แล้วสุ่มลำดับ
+  // สร้าง list ของ choices พร้อม original index แล้วสุ่ม
   currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
-  currentChoices = shuffleArray(currentChoices);
+  currentChoices = fisherYatesShuffle(currentChoices);
 
   currentChoices.forEach((choice, idx) => {
     const li = document.createElement('li');
     li.textContent = choice.text;
     li.onclick = () => {
       selectedOption = idx;
-      document.querySelectorAll('#options li')
-        .forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('#options li').forEach(el =>
+        el.classList.remove('selected')
+      );
       li.classList.add('selected');
     };
     optionsList.appendChild(li);
@@ -59,12 +63,8 @@ function submitAnswer() {
 
   const q = questions[currentQuestionIndex];
   const selectedChoice = currentChoices[selectedOption];
-  const correctIndex = Number(q.answer); // แปลงเป็นตัวเลขเผื่อมาเป็นสตริง
-  // ตรวจสอบความถูกต้องโดยเทียบกับ original index
+  const correctIndex = q.answer;
   const isCorrect = selectedChoice.index === correctIndex;
-
-  // *** Debugging log ***
-  console.log(`Q${currentQuestionIndex+1}: selectedChoice.index=${selectedChoice.index}, correctIndex=${correctIndex}`);
 
   // เก็บผลลัพธ์
   userAnswers.push({
@@ -76,17 +76,21 @@ function submitAnswer() {
 
   if (isCorrect) {
     score++;
-  }
-
-  // เคลียร์ selection และขึ้นข้อถัดไป
-  selectedOption = null;
-  currentQuestionIndex++;
-
-  if (currentQuestionIndex < questions.length) {
-    showQuestion();
+    document.getElementById("feedback").textContent = "😊 ถูกต้อง!";
   } else {
-    showResults();
+    document.getElementById("feedback").textContent =
+      `😢 ผิด! เฉลยคือ: ${q.options[correctIndex]}`;
   }
+
+  // รอให้ดู feedback 1 วิ แล้วไปข้อต่อไป
+  setTimeout(() => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResults();
+    }
+  }, 1000);
 }
 
 function showResults() {
@@ -101,24 +105,22 @@ function showResults() {
   review.innerHTML = '';
   let reviewText = '';
 
-  userAnswers
-    .filter(a => !a.isCorrect)
-    .forEach(a => {
-      const text = `คำถาม: ${a.question} | คำตอบของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
-      reviewText += text + "\n";
-      const li = document.createElement("li");
-      li.textContent = text;
-      review.appendChild(li);
-    });
+  userAnswers.filter(a => !a.isCorrect).forEach(a => {
+    const text = `คำถาม: ${a.question} | คำตอบคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
+    reviewText += text + "\n";
+    const li = document.createElement("li");
+    li.textContent = text;
+    review.appendChild(li);
+  });
 
   sendResultsToGoogleSheets(userName, score, percentage, reviewText);
 }
 
 function downloadResults() {
   let csv = `ชื่อ,คะแนน,เปอร์เซ็นต์\n${userName},${score},${Math.round((score / questions.length) * 100)}%\n\n`;
-  csv += "คำถาม,คำตอบของผู้เล่น,คำตอบที่ถูกต้อง\n";
-  userAnswers.forEach(q => {
-    csv += `"${q.question}","${q.userAnswer}","${q.correctAnswer}"\n`;
+  csv += "คำถาม,คำตอบคุณ,เฉลย\n";
+  userAnswers.forEach(a => {
+    csv += `"${a.question}","${a.userAnswer}","${a.correctAnswer}"\n`;
   });
 
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -128,8 +130,14 @@ function downloadResults() {
   link.click();
 }
 
-function shuffleArray(arr) {
-  return arr.sort(() => Math.random() - 0.5);
+// Fisher–Yates shuffle
+function fisherYatesShuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
