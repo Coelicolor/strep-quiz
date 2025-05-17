@@ -148,20 +148,22 @@ function restartQuiz() {
   document.getElementById("start-screen").style.display = "block";
 }
 
-// ฟังก์ชันส่งข้อมูลไป Google Forms/Sheets
+// ปรับ sendResultsToGoogleSheets ให้ใช้ viewform?usp=pp_url&entry...
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
-  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
-  const formData = new URLSearchParams();
-  formData.append('entry.1964442273', name);
-  formData.append('entry.1111191378', score);
-  formData.append('entry.366131963', percentage);
-  formData.append('entry.2106468144', reviewText);
-
-  fetch(formUrl, {
-    method: 'POST',
-    body: formData,
+  // base URL ของ Google Form (viewform) พร้อม prefill
+  const baseUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/viewform?usp=pp_url';
+  // สร้าง query parameters
+  const params = new URLSearchParams({
+    'entry.1964442273': name,
+    'entry.1111191378': score,
+    'entry.366131963': percentage,
+    'entry.2106468144': reviewText
+  });
+  // ยิง GET (no-cors) เพื่อบันทึกข้อมูล
+  fetch(`${baseUrl}&${params.toString()}`, {
+    method: 'GET',
     mode: 'no-cors'
   })
-    .then(() => console.log('ส่งข้อมูลไป Google Sheets เรียบร้อย'))
+    .then(() => console.log('ส่งข้อมูลไป Google Forms เรียบร้อย'))
     .catch(err => console.error('ส่งข้อมูลไม่สำเร็จ', err));
 }
