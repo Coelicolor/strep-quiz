@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Streptomyces Quiz</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="start-screen">
+    <h1>แบบทดสอบ Streptomyces Fermentation</h1>
+    <input type="text" id="username" placeholder="กรอกชื่อนักศึกษา"/>
+    <button onclick="startQuiz()">เริ่มทำแบบทดสอบ</button>
+  </div>
+
+  <div id="quiz-screen" style="display:none;">
+    <h2 id="question-title"></h2>
+    <ul id="options"></ul>
+    <button onclick="submitAnswer()">ยืนยันคำตอบ</button>
+    <p id="feedback"></p>
+  </div>
+
+  <div id="result-screen" style="display:none;">
+    <h2>ผลการทำแบบทดสอบ</h2>
+    <p id="score-summary"></p>
+    <h3>เฉลยข้อที่ตอบผิด</h3>
+    <ul id="review"></ul>
+    <button onclick="downloadResults()">ดาวน์โหลดผลลัพธ์ (.csv)</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
