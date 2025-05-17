@@ -49,13 +49,10 @@ function startQuiz() {
     alert("กรุณากรอกชื่อก่อนเริ่มแบบทดสอบ");
     return;
   }
-  // ซ่อนหน้าเริ่มต้น
   document.getElementById("start-screen").style.display = "none";
-  // รีเซ็ตข้อมูล
   currentQuestionIndex = 0;
   score = 0;
   userAnswers = [];
-  // แสดงหน้าทำแบบทดสอบ
   document.getElementById("quiz-screen").style.display = "block";
   showQuestion();
 }
@@ -71,7 +68,6 @@ function showQuestion() {
   document.getElementById("feedback").textContent = '';
   selectedOption = null;
 
-  // สร้าง currentChoices พร้อมดัชนีดั้งเดิม
   currentChoices = q.options.map((text, idx) => ({ text, index: idx }));
   currentChoices = shuffle(currentChoices);
 
@@ -99,7 +95,6 @@ function submitAnswer() {
   const choice = currentChoices[selectedOption];
   const isCorrect = choice.index === q.answerIndex;
 
-  // เก็บผล
   userAnswers.push({
     question: q.question,
     userAnswer: choice.text,
@@ -108,11 +103,9 @@ function submitAnswer() {
   });
   if (isCorrect) score++;
 
-  // feedback
   document.getElementById("feedback").textContent =
     isCorrect ? "😊 ถูกต้อง!" : `😢 ผิด! เฉลย: ${q.correctText}`;
 
-  // รอ 1 วิ แล้วไปข้อถัดไป
   setTimeout(() => {
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
@@ -132,25 +125,43 @@ function showResults() {
   document.getElementById("score-summary").textContent =
     `${userName} ได้คะแนน ${score}/${questions.length} (${percentage}%)`;
 
-  const review = document.getElementById("review");
-  review.innerHTML = '';
+  const reviewEl = document.getElementById("review");
+  reviewEl.innerHTML = '';
+  let reviewText = '';
+
   userAnswers.filter(a => !a.isCorrect).forEach(a => {
     const li = document.createElement('li');
-    li.textContent = `คำถาม: ${a.question} | ของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
-    review.appendChild(li);
+    const text = `คำถาม: ${a.question} | ของคุณ: ${a.userAnswer} | เฉลย: ${a.correctAnswer}`;
+    li.textContent = text;
+    reviewEl.appendChild(li);
+    reviewText += text + '\n';
   });
+
+  // ส่งผลลัพธ์ไป Google Sheets ทันทีที่แสดงผล
+  sendResultsToGoogleSheets(userName, score, percentage, reviewText);
 }
 
-
+// เริ่มใหม่อีกครั้ง
 function restartQuiz() {
-  // ซ่อนทั้ง quiz และ result
   document.getElementById("quiz-screen").style.display = "none";
   document.getElementById("result-screen").style.display = "none";
-  // รีเซ็ตสถานะ (ถ้าต้องการ)
-  currentQuestionIndex = 0;
-  score = 0;
-  userAnswers = [];
-  // แสดงหน้า start ใหม่
   document.getElementById("start-screen").style.display = "block";
 }
 
+// ฟังก์ชันส่งข้อมูลไป Google Forms/Sheets
+function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
+  const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
+  const formData = new URLSearchParams();
+  formData.append('entry.1964442273', name);
+  formData.append('entry.1111191378', score);
+  formData.append('entry.366131963', percentage);
+  formData.append('entry.2106468144', reviewText);
+
+  fetch(formUrl, {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors'
+  })
+    .then(() => console.log('ส่งข้อมูลไป Google Sheets เรียบร้อย'))
+    .catch(err => console.error('ส่งข้อมูลไม่สำเร็จ', err));
+}
