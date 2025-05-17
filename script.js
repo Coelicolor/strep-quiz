@@ -8,7 +8,7 @@ let userName = '';
 fetch('questions.json')
   .then(res => res.json())
   .then(data => {
-    // สุ่มคำถาม 25 ข้อจาก 50 ข้อ
+    // ⭐ สุ่มคำถาม 25 ข้อจากทั้งหมด
     questions = shuffleArray(data).slice(0, 25);
   });
 
@@ -30,11 +30,15 @@ function showQuestion() {
   optionsList.innerHTML = '';
   document.getElementById("feedback").textContent = '';
 
-  q.options.forEach((opt, index) => {
+  // ⭐ สุ่มลำดับตัวเลือก พร้อมเก็บ index เดิม
+  const choicesWithIndex = q.options.map((text, i) => ({ text, index: i }));
+  const shuffledChoices = shuffleArray(choicesWithIndex);
+
+  shuffledChoices.forEach((choice) => {
     const li = document.createElement('li');
-    li.textContent = opt;
+    li.textContent = choice.text;
     li.onclick = () => {
-      selectedOption = index;
+      selectedOption = choice.index; // ⭐ เก็บ index ของตัวเลือกเดิม
       document.querySelectorAll('#options li').forEach(el => el.classList.remove('selected'));
       li.classList.add('selected');
     };
@@ -112,7 +116,7 @@ function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
 
-// ฟังก์ชันส่งข้อมูลไป Google Sheets
+// ส่งข้อมูลไป Google Sheets
 function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSedQrXdAmyZPZga6X46kY6SXcVtvxFX5YknT5VBMgMSwFe3Rg/formResponse';
 
@@ -120,12 +124,12 @@ function sendResultsToGoogleSheets(name, score, percentage, reviewText) {
   formData.append('entry.1964442273', name);        // ชื่อนักเรียน
   formData.append('entry.1111191378', score);       // คะแนน
   formData.append('entry.366131963', percentage);   // เปอร์เซ็นต์
-  formData.append('entry.2106468144', reviewText);  // รายละเอียดผลลัพธ์
+  formData.append('entry.2106468144', reviewText);  // เฉลย
 
   fetch(formUrl, {
     method: 'POST',
     body: formData,
-    mode: 'no-cors' // ป้องกัน CORS errors
+    mode: 'no-cors'
   })
   .then(() => {
     console.log('ส่งข้อมูลไป Google Sheets เรียบร้อยแล้ว');
